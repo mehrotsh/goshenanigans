@@ -1,4 +1,3 @@
-index=* earliest=-7d@d latest=@d 
-| eval size=round(len(_raw)/1024/1024,2) 
-| stats count as event_count sum(size) as total_size by index 
-| where total_size > 1024
+| tstats count where _time >= relative_time(now(), "-7d@d") by index 
+| where count > 0
+| map search="search index=$index$ earliest=-7d@d latest=@d | timechart span=1d count"

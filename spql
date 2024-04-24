@@ -1,6 +1,4 @@
-| tstats summariesonly=true count as event_count from datamodel=Summary where nodename="*|datamodel" earliest=-1w latest=now by _time,index 
-| where event_count > 0
-| eventstats sum(event_count) as total_events by index
-| search total_events > 0
-| `datamodels` 
-| search total_size > 1*1024*1024*1024
+index=* earliest=-7d@d latest=@d 
+| eval size=round(len(_raw)/1024/1024,2) 
+| stats count as event_count sum(size) as total_size by index 
+| where total_size > 1024
